@@ -54,11 +54,7 @@ struct Cart {
         return total
     }
 
-    func itemsInOrderAdded() -> [Product] {
-        return order
-    }
+    func uniqueItensQuantity() -> Int { products.count }
 
-    func uniqueItensQuantity() -> Int {
-        products.count
-    }
+    func itemsInOrderAdded() -> [Product] { order }
 }

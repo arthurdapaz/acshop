@@ -20,6 +20,17 @@ final class ProductTableViewCell: UITableViewCell {
         return view
     }()
 
+    private lazy var noImageLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .preferredFont(forTextStyle: .caption2)
+        label.numberOfLines = 0
+        label.textColor = .storePrimary
+        label.isHidden = true
+        label.text = "Sem imagem"
+        return label
+    }()
+
     private lazy var name: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .title2)
@@ -55,22 +66,40 @@ final class ProductTableViewCell: UITableViewCell {
 
     private lazy var addToCartButton: UIButton = {
         let button = UIButton(type: .system)
+        button.semanticContentAttribute = .forceRightToLeft
         button.titleLabel?.font = .boldSystemFont(ofSize: 18)
-        button.setTitle("Adicionar", for: .normal)
+        button.setTitle("Adicionar ", for: .normal)
         button.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
+        button.contentEdgeInsets = .init(top: 8, left: 8, bottom: 8, right: 8)
+        button.backgroundColor = .storeSecondary
+        button.layer.cornerRadius = 25
         button.addAction(UIAction { [unowned self] _ in
             delegate?.didTapAddToCart(self.tag)
+            self.animation()
         }, for: .touchUpInside)
 
         return button
     }()
+
+    private func animation() {
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+            self.addToCartButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+            self.contentView.layoutIfNeeded()
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                self.addToCartButton.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
+            })
+        })
+        
+    }
 
     private lazy var verticalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = Design.Token.spacing_A
         stack.alignment = .top
-        stack.distribution = .fillProportionally
+        stack.distribution = .fill
+        // stack.distribution = .fillProportionally
 
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.isLayoutMarginsRelativeArrangement = true
@@ -107,16 +136,24 @@ extension ProductTableViewCell {
         
         contentView.addSubview(productImage)
         contentView.addSubview(verticalStack)
+        contentView.addSubview(noImageLabel)
 
         productImage.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         productImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         productImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         productImage.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -Design.Token.spacing_C).isActive = true
 
+        noImageLabel.centerXAnchor.constraint(equalTo: productImage.centerXAnchor).isActive = true
+        noImageLabel.centerYAnchor.constraint(equalTo: productImage.centerYAnchor, constant: Design.Token.spacing_C).isActive = true
+
         verticalStack.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         verticalStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         verticalStack.leadingAnchor.constraint(equalTo: productImage.trailingAnchor).isActive = true
         verticalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+
+        addToCartButton.leadingAnchor.constraint(equalTo: verticalStack.leadingAnchor, constant: Design.Token.spacing_B).isActive = true
+        addToCartButton.trailingAnchor.constraint(equalTo: verticalStack.trailingAnchor, constant: -Design.Token.spacing_B).isActive = true
+        addToCartButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
 
     func configure(with product: Product) {
@@ -139,9 +176,9 @@ extension ProductTableViewCell {
     }
 
     private func setImage(_ remoteURL: String) {
-        let placeHolder = UIImage.remove
+        productImage.contentMode = .scaleAspectFill
         guard let url = URL(string: remoteURL) else {
-            productImage.image = placeHolder
+            usePlaceHolder()
             return
         }
 
@@ -149,8 +186,14 @@ extension ProductTableViewCell {
             do {
                 try await productImage.setImageFrom(url: url)
             } catch {
-                productImage.image = placeHolder
+                usePlaceHolder()
             }
         }
+    }
+
+    private func usePlaceHolder() {
+        productImage.contentMode = .center
+        productImage.image = .productPlaceHolder
+        noImageLabel.isHidden = false
     }
 }

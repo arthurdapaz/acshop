@@ -65,6 +65,12 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
             .map { !$0.isEmpty() }
             .assign(to: \.isHidden, on: emptyLabel)
             .store(in: &cancellables)
+
+        viewModel.$cart
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.tableView.reloadData()
+            }.store(in: &cancellables)
     }
 }
 
@@ -79,8 +85,14 @@ extension ShoppingCartViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.reuseIdentifier, for: indexPath) as! CartTableViewCell
-        cell.configure(with: viewModel.cart.itemsInOrderAdded()[indexPath.row])
+
+        let product = viewModel.cart.itemsInOrderAdded()[indexPath.row]
+        let quantity = viewModel.cart.quantity(for: product)
+
+        cell.tag = indexPath.row
+        cell.configure(with: product, quantity: quantity)
         cell.delegate = self
+
         return cell
     }
 }
@@ -94,7 +106,13 @@ extension ShoppingCartViewController: UITableViewDelegate {
 }
 
 extension ShoppingCartViewController: CartTableViewCellDelegate {
-    func didTapAddToCart(_ cellIndex: Int) {
+    func increaseQuantity(_ cell: CartTableViewCell) {
+        let product = viewModel.cart.itemsInOrderAdded()[cell.tag]
+        viewModel.cart.increaseQuantity(for: product)
+    }
 
+    func decreaseQuantity(_ cell: CartTableViewCell) {
+        let product = viewModel.cart.itemsInOrderAdded()[cell.tag]
+        viewModel.cart.decreaseQuantity(for: product)
     }
 }

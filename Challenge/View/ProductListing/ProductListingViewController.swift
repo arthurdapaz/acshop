@@ -92,7 +92,14 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
     }
 
     @objc private func didTapCartIcon() {
-        let cartController = ShoppingCartFactory.make(viewModel.cart)
+        let (cartController, cartViewModel) = ShoppingCartFactory.make(viewModel.cart)
+
+        cartViewModel.$cart
+            .receive(on: RunLoop.main)
+            .sink { [weak viewModel] in
+                viewModel?.cart = $0
+        }.store(in: &cancellables)
+
         present(cartController, animated: true)
     }
 

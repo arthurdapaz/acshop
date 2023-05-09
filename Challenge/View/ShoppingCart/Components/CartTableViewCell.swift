@@ -1,7 +1,8 @@
 import UIKit
 
 protocol CartTableViewCellDelegate: AnyObject {
-    func didTapAddToCart(_ cellIndex: Int)
+    func increaseQuantity(_ cell: CartTableViewCell)
+    func decreaseQuantity(_ cell: CartTableViewCell)
 }
 
 final class CartTableViewCell: UITableViewCell {
@@ -33,6 +34,43 @@ final class CartTableViewCell: UITableViewCell {
         return label
     }()
 
+    private lazy var decreaseButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "cart.fill.badge.minus"), for: .normal)
+        button.addAction(UIAction(handler: { [weak self] _ in
+            guard let self else { return }
+            self.delegate?.decreaseQuantity(self)
+        }), for: .touchUpInside)
+        return button
+    }()
+
+    private lazy var increaseButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
+        button.addAction(UIAction(handler: { [weak self] _ in
+            guard let self else { return }
+            self.delegate?.increaseQuantity(self)
+        }), for: .touchUpInside)
+        return button
+    }()
+
+    private lazy var quantity: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .body)
+        return label
+    }()
+
+
+    private lazy var quantityStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 2
+        stack.addArrangedSubview(decreaseButton)
+        stack.addArrangedSubview(increaseButton)
+        stack.addArrangedSubview(quantity)
+        return stack
+    }()
+
     private lazy var verticalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
@@ -44,11 +82,12 @@ final class CartTableViewCell: UITableViewCell {
         stack.isLayoutMarginsRelativeArrangement = true
         stack.addArrangedSubview(name)
         stack.addArrangedSubview(price)
+        stack.addArrangedSubview(quantityStack)
 
-        stack.layoutMargins = .init(top: Design.Token.spacing_B,
-                                    left: Design.Token.spacing_B,
-                                    bottom: Design.Token.spacing_B,
-                                    right: Design.Token.spacing_B)
+        stack.layoutMargins = .init(top: Design.Token.spacing_A,
+                                    left: Design.Token.spacing_A,
+                                    bottom: Design.Token.spacing_A,
+                                    right: Design.Token.spacing_A)
         return stack
     }()
 
@@ -82,17 +121,18 @@ extension CartTableViewCell {
         verticalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
     }
 
-    func configure(with product: Product) {
+    func configure(with product: Product, quantity: Int) {
         setImage(product.image)
 
         name.text = product.name
         price.text = product.regularPrice
+        self.quantity.text = "Quantidade: \(quantity)"
     }
 
     private func setImage(_ remoteURL: String) {
-        let placeHolder = UIImage.remove
+        productImage.contentMode = .scaleAspectFill
         guard let url = URL(string: remoteURL) else {
-            productImage.image = placeHolder
+            usePlaceHolder()
             return
         }
 
@@ -100,8 +140,13 @@ extension CartTableViewCell {
             do {
                 try await productImage.setImageFrom(url: url)
             } catch {
-                productImage.image = placeHolder
+                usePlaceHolder()
             }
         }
+    }
+
+    private func usePlaceHolder() {
+        productImage.contentMode = .center
+        productImage.image = .productPlaceHolder
     }
 }

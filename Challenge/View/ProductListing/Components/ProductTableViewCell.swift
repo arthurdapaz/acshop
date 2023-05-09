@@ -1,6 +1,14 @@
 import UIKit
 
+protocol ProductTableViewCellDelegate: AnyObject {
+    func didTapAddToCart(_ cellIndex: Int)
+}
+
 final class ProductTableViewCell: UITableViewCell {
+
+    weak var delegate: ProductTableViewCellDelegate?
+
+    private var index = 0
 
     static var reuseIdentifier: String { String(describing: self) }
 
@@ -46,16 +54,13 @@ final class ProductTableViewCell: UITableViewCell {
     }()
 
     private lazy var addToCartButton: UIButton = {
-        let action = UIAction { action in
-            print(action)
-        }
-
         let button = UIButton(type: .system)
         button.titleLabel?.font = .boldSystemFont(ofSize: 18)
         button.setTitle("Adicionar", for: .normal)
         button.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
-        button.addAction(action, for: .touchUpInside)
-        button.largeContentImageInsets = .zero
+        button.addAction(UIAction { [weak self] _ in
+            self?.delegate?.didTapAddToCart(self?.index ?? 0)
+        }, for: .touchUpInside)
 
         return button
     }()
@@ -102,15 +107,14 @@ extension ProductTableViewCell {
         contentView.addSubview(verticalStack)
 
         productImage.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        productImage.heightAnchor.constraint(equalTo: verticalStack.heightAnchor).isActive = true
+        productImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         productImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         productImage.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -Design.Token.spacing_C).isActive = true
 
         verticalStack.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        verticalStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         verticalStack.leadingAnchor.constraint(equalTo: productImage.trailingAnchor).isActive = true
         verticalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        verticalStack.heightAnchor.constraint(equalToConstant: 400).isActive = true
-        verticalStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
 
     func configure(with product: Product) {

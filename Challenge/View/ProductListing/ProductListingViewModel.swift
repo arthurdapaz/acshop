@@ -5,11 +5,12 @@ final class ProductListingViewModel {
     enum ViewState {
         case loading
         case loaded
-        case error
+        case error(Error?)
     }
 
     @Published var viewState: ViewState = .loading
     @Published var products: [Product] = []
+    @Published var cart: [Product] = []
 
     private let service: APIClientProtocol
     init(service: APIClientProtocol = APIClient()) {
@@ -21,10 +22,18 @@ final class ProductListingViewModel {
         Task {
             do {
                 products = try await service.fetchProducts()
-                print(products)
+                dump(products)
+                viewState = .loaded
             } catch {
-                viewState = .error
+                viewState = .error(error)
             }
         }
+    }
+
+    func addToCart(productIndex: Int) {
+        guard products.indices.contains(productIndex) else {
+            fatalError("Got wrong item index")
+        }
+        cart.append(products[productIndex])
     }
 }

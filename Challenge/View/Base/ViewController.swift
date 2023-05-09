@@ -21,3 +21,12 @@ class ViewController<ViewModel>: UIViewController {
 
     func configViews() { fatalError("Please override \(#function)") }
 }
+
+extension ViewController {
+    func showError(title: String?, message: String?) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        present(alertController, animated: true)
+    }
+}

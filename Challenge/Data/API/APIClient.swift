@@ -13,13 +13,4 @@ final class APIClient: APIClientProtocol {
         let decoded = try JSONDecoder().decode(Products.self, from: data)
         return decoded.products
     }
-
-    func fetchImage(from imageURL: URL) async throws -> UIImage {
-        let (data, _) = try await URLSession.shared.data(from: imageURL)
-        guard let image = UIImage(data: data) else {
-            throw APIError.invalidImageData
-        }
-
-        return image
-    }
 }

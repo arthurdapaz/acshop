@@ -62,14 +62,14 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
     private func addBindings() {
         viewModel.$cart
             .receive(on: RunLoop.main)
-            .map { !$0.isEmpty }
+            .map { !$0.isEmpty() }
             .assign(to: \.isHidden, on: emptyLabel)
             .store(in: &cancellables)
     }
 }
 
 extension ShoppingCartViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { viewModel.cart.count }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { viewModel.cart.uniqueItensQuantity() }
 
     func numberOfSections(in tableView: UITableView) -> Int { 1 }
 
@@ -79,7 +79,7 @@ extension ShoppingCartViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.reuseIdentifier, for: indexPath) as! CartTableViewCell
-        cell.configure(with: viewModel.cart[indexPath.row])
+        cell.configure(with: viewModel.cart.itemsInOrderAdded()[indexPath.row])
         cell.delegate = self
         return cell
     }

@@ -2,9 +2,9 @@ import Combine
 import Foundation
 
 final class ShoppingCartViewModel {
-    @Published var cart: [Product]
+    @Published var cart: Cart = Cart()
 
-    init(cart: [Product]) {
+    init(cart: Cart) {
         self.cart = cart
     }
 }

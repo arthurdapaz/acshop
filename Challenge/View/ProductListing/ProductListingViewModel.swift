@@ -9,7 +9,7 @@ final class ProductListingViewModel {
 
     @Published var viewState: ViewState = .loading
     @Published var products: [Product] = []
-    @Published var cart: [Product] = []
+    @Published var cart: Cart = Cart()
 
     private let service: APIClientProtocol
     init(service: APIClientProtocol = APIClient()) {
@@ -32,6 +32,6 @@ final class ProductListingViewModel {
         guard products.indices.contains(productIndex) else {
             fatalError("Got wrong item index")
         }
-        cart.append(products[productIndex])
+        cart.addProduct(products[productIndex])
     }
 }

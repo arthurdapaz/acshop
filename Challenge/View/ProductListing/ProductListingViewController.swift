@@ -85,7 +85,7 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
 
         viewModel.$cart
             .receive(on: RunLoop.main)
-            .map { UIImage(systemName: $0.isEmpty ? "cart" : "cart.fill") }
+            .map { UIImage(systemName: $0.isEmpty() ? "cart" : "cart.fill") }
             .sink { [weak self] in
                 self?.setCartIcon($0)
         }.store(in: &cancellables)

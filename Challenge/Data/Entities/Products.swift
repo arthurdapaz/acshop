@@ -41,3 +41,13 @@ struct Product: Codable, Equatable, Identifiable {
 struct Products: Codable, Equatable {
     let products: [Product]
 }
+
+extension Product: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        return hasher.combine(id)
+    }
+
+    public static func == (lhs: Product, rhs: Product) -> Bool {
+        return lhs.id == rhs.id
+    }
+}

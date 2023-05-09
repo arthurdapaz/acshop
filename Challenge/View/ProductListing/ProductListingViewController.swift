@@ -36,6 +36,13 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Produtos"
         view.backgroundColor = .white
+        addCartIcon()
+    }
+
+    private func addCartIcon() {
+        let barButton = UIBarButtonItem(image: UIImage(systemName: "cart.fill"), style: .plain, target: self, action: #selector(didTapCartIcon))
+        // barButton.tintColor = Color.primary500.color
+        navigationItem.rightBarButtonItem = barButton
     }
 
     private func addBindings() {
@@ -44,6 +51,10 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
             .sink { [weak self] _ in
             self?.tableView.reloadData()
         }.store(in: &cancellables)
+    }
+
+    @objc private func didTapCartIcon() {
+
     }
 }
 

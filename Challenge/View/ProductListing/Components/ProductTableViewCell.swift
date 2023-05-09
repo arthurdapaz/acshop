@@ -14,14 +14,14 @@ final class ProductTableViewCell: UITableViewCell {
 
     private lazy var name: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title1)
+        label.font = .preferredFont(forTextStyle: .title2)
         label.numberOfLines = 0
         return label
     }()
 
     private lazy var price: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title2)
+        label.font = .preferredFont(forTextStyle: .title3)
         return label
     }()
 
@@ -34,6 +34,7 @@ final class ProductTableViewCell: UITableViewCell {
     private lazy var promotionPrice: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .title1)
+        label.font = .boldSystemFont(ofSize: 24)
         return label
     }()
 
@@ -64,6 +65,7 @@ final class ProductTableViewCell: UITableViewCell {
         stack.axis = .vertical
         stack.spacing = Design.Token.spacing_A
         stack.alignment = .top
+        stack.distribution = .fillProportionally
 
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.isLayoutMarginsRelativeArrangement = true
@@ -74,15 +76,11 @@ final class ProductTableViewCell: UITableViewCell {
         stack.addArrangedSubview(availableSizes)
         stack.addArrangedSubview(addToCartButton)
 
-        let spacerView = UIView()
-        spacerView.frame = .init(x: 0, y: 0, width: 0, height: Design.Token.spacing_B)
-        stack.addArrangedSubview(spacerView)
-
         stack.setCustomSpacing(Design.Token.spacing_C, after: availableSizes)
-        stack.layoutMargins.top = Design.Token.spacing_B
-        stack.layoutMargins.left = Design.Token.spacing_B
-        stack.layoutMargins.right = Design.Token.spacing_B
-        stack.layoutMargins.right = Design.Token.spacing_B
+        stack.layoutMargins = .init(top: Design.Token.spacing_B,
+                                    left: Design.Token.spacing_B,
+                                    bottom: Design.Token.spacing_B,
+                                    right: Design.Token.spacing_B)
         return stack
     }()
 
@@ -121,9 +119,9 @@ extension ProductTableViewCell {
         name.text = product.name
         price.text = product.regularPrice
         promotionPrice.text = product.actualPrice
-
+        promotionPrice.isHidden = !product.onSale
         if product.onSale {
-            promotion.text = "Em promoção"
+            promotion.text = "Em promoção:"
             promotion.textColor = .systemGreen
         } else {
             promotion.text = "Sem promoção"

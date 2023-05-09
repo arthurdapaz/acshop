@@ -3,8 +3,6 @@ import UIKit
 
 final class ProductListingViewController: ViewController<ProductListingViewModel> {
 
-    private var cancellables: [AnyCancellable] = []
-
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -24,9 +22,23 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
         return loader
     }()
 
+    private lazy var retryButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .storeSecondary
+        button.setTitle("Tentar Novamente", for: .normal)
+        button.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
+        button.isHidden = true
+        button.addAction(UIAction { [weak viewModel] _ in
+            viewModel?.fetchProducts()
+        }, for: .touchUpInside)
+        return button
+    }()
+
     override func setupHierarchy() {
         view.addSubview(tableView)
         view.addSubview(indicatorView)
+        view.addSubview(retryButton)
     }
 
     override func setupConstraints() {
@@ -38,13 +50,15 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
         indicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         indicatorView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -Design.Token.spacing_C).isActive = true
         indicatorView.widthAnchor.constraint(equalToConstant: 40).isActive = true
+
+        retryButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        retryButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -Design.Token.spacing_C).isActive = true
     }
 
     override func configViews() {
-        navigationController?.navigationBar.prefersLargeTitles = true
         title = "Produtos"
         view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "cart.fill"),
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "cart"),
                                                             style: .plain,
                                                             target: self,
                                                             action: #selector(didTapCartIcon))
@@ -68,22 +82,42 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
             .sink { [weak self] _ in
             self?.tableView.reloadData()
         }.store(in: &cancellables)
+
+        viewModel.$cart
+            .receive(on: RunLoop.main)
+            .map { UIImage(systemName: $0.isEmpty ? "cart" : "cart.fill") }
+            .sink { [weak self] in
+                self?.setCartIcon($0)
+        }.store(in: &cancellables)
     }
 
     @objc private func didTapCartIcon() {
-
+        let cartController = ShoppingCartFactory.make(viewModel.cart)
+        present(cartController, animated: true)
     }
 
     private func handleState(_ state: ProductListingViewModel.ViewState) {
         switch state {
         case .loading:
             indicatorView.startAnimating()
+            retryButton.isHidden = true
+
         case .loaded:
             indicatorView.stopAnimating()
+            retryButton.isHidden = true
+
         case let .error(error):
             indicatorView.stopAnimating()
-            showError(title: "Erro desconhecido", message: "Um erro não esperado aconteceu. \(String(describing: error))")
+            retryButton.isHidden = false
+            showError(title: "Erro desconhecido", message: "Um erro não esperado aconteceu. \(error?.localizedDescription ?? String(describing: error))")
         }
+    }
+
+    private func setCartIcon(_ image: UIImage? = UIImage(systemName: "cart")) {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: image,
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(didTapCartIcon))
     }
 }
 
@@ -99,7 +133,8 @@ extension ProductListingViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ProductTableViewCell.reuseIdentifier, for: indexPath) as! ProductTableViewCell
         cell.configure(with: viewModel.products[indexPath.row])
-
+        cell.tag = indexPath.row
+        cell.delegate = self
         return cell
     }
 }

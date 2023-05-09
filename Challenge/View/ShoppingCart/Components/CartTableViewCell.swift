@@ -1,12 +1,12 @@
 import UIKit
 
-protocol ProductTableViewCellDelegate: AnyObject {
+protocol CartTableViewCellDelegate: AnyObject {
     func didTapAddToCart(_ cellIndex: Int)
 }
 
-final class ProductTableViewCell: UITableViewCell {
+final class CartTableViewCell: UITableViewCell {
 
-    weak var delegate: ProductTableViewCellDelegate?
+    weak var delegate: CartTableViewCellDelegate?
 
     private var index = 0
 
@@ -22,53 +22,21 @@ final class ProductTableViewCell: UITableViewCell {
 
     private lazy var name: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title2)
+        label.font = .preferredFont(forTextStyle: .headline)
         label.numberOfLines = 0
         return label
     }()
 
     private lazy var price: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title3)
+        label.font = .preferredFont(forTextStyle: .body)
         return label
-    }()
-
-    private lazy var promotion: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .callout)
-        return label
-    }()
-
-    private lazy var promotionPrice: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title1)
-        label.font = .boldSystemFont(ofSize: 24)
-        return label
-    }()
-
-    private lazy var availableSizes: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .callout)
-        label.numberOfLines = 2
-        return label
-    }()
-
-    private lazy var addToCartButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
-        button.setTitle("Adicionar", for: .normal)
-        button.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
-        button.addAction(UIAction { [unowned self] _ in
-            delegate?.didTapAddToCart(self.tag)
-        }, for: .touchUpInside)
-
-        return button
     }()
 
     private lazy var verticalStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = Design.Token.spacing_A
+        stack.spacing = 2
         stack.alignment = .top
         stack.distribution = .fillProportionally
 
@@ -76,12 +44,7 @@ final class ProductTableViewCell: UITableViewCell {
         stack.isLayoutMarginsRelativeArrangement = true
         stack.addArrangedSubview(name)
         stack.addArrangedSubview(price)
-        stack.addArrangedSubview(promotion)
-        stack.addArrangedSubview(promotionPrice)
-        stack.addArrangedSubview(availableSizes)
-        stack.addArrangedSubview(addToCartButton)
 
-        stack.setCustomSpacing(Design.Token.spacing_C, after: availableSizes)
         stack.layoutMargins = .init(top: Design.Token.spacing_B,
                                     left: Design.Token.spacing_B,
                                     bottom: Design.Token.spacing_B,
@@ -101,17 +64,17 @@ final class ProductTableViewCell: UITableViewCell {
     }
 }
 
-extension ProductTableViewCell {
+extension CartTableViewCell {
     private func commonConfig() {
         selectionStyle = .none
-        
+
         contentView.addSubview(productImage)
         contentView.addSubview(verticalStack)
 
         productImage.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         productImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         productImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        productImage.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -Design.Token.spacing_C).isActive = true
+        productImage.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -Design.Token.spacing_C*2).isActive = true
 
         verticalStack.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
         verticalStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
@@ -124,18 +87,6 @@ extension ProductTableViewCell {
 
         name.text = product.name
         price.text = product.regularPrice
-        promotionPrice.text = product.actualPrice
-        promotionPrice.isHidden = !product.onSale
-        if product.onSale {
-            promotion.text = "Em promoção:"
-            promotion.textColor = .systemGreen
-        } else {
-            promotion.text = "Sem promoção"
-            promotion.textColor = .systemGray
-        }
-
-        let sizes = (product.sizes.filter { $0.available }.map { $0.size }).joined(separator: " ")
-        availableSizes.text = "Tamanhos:\n\(sizes)"
     }
 
     private func setImage(_ remoteURL: String) {

@@ -1,7 +1,10 @@
 import Combine
 import Foundation
 
-@MainActor
 final class ShoppingCartViewModel {
+    @Published var cart: [Product]
 
+    init(cart: [Product]) {
+        self.cart = cart
+    }
 }

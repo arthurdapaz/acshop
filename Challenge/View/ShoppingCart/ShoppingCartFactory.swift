@@ -1,8 +1,8 @@
 import UIKit
 
 enum ShoppingCartFactory {
-    @MainActor static func make() -> UIViewController {
-        let viewModel = ShoppingCartViewModel()
+    static func make(_ cart: [Product]) -> UIViewController {
+        let viewModel = ShoppingCartViewModel(cart: cart)
         let controller = ShoppingCartViewController(viewModel: viewModel)
         return controller
     }

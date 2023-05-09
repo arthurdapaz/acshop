@@ -1,6 +1,5 @@
 import Foundation
 
-@MainActor
 final class ProductListingViewModel {
     enum ViewState {
         case loading
@@ -22,7 +21,6 @@ final class ProductListingViewModel {
         Task {
             do {
                 products = try await service.fetchProducts()
-                dump(products)
                 viewState = .loaded
             } catch {
                 viewState = .error(error)

@@ -1,6 +1,9 @@
+import Combine
 import UIKit
 
 class ViewController<ViewModel>: UIViewController {
+
+    var cancellables: [AnyCancellable] = []
 
     let viewModel: ViewModel
 

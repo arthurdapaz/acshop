@@ -8,8 +8,6 @@ final class ProductTableViewCell: UITableViewCell {
 
     weak var delegate: ProductTableViewCellDelegate?
 
-    private var index = 0
-
     static var reuseIdentifier: String { String(describing: self) }
 
     private lazy var productImage: UIImageView = {
@@ -81,28 +79,12 @@ final class ProductTableViewCell: UITableViewCell {
         return button
     }()
 
-    private func animation() {
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-            self.addToCartButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
-            self.contentView.layoutIfNeeded()
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
-                self.addToCartButton.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
-            })
-        })
-        
-    }
-
     private lazy var verticalStack: UIStackView = {
         let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
         stack.spacing = Design.Token.spacing_A
-        stack.alignment = .top
-        stack.distribution = .fill
-        // stack.distribution = .fillProportionally
 
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.isLayoutMarginsRelativeArrangement = true
         stack.addArrangedSubview(name)
         stack.addArrangedSubview(price)
         stack.addArrangedSubview(promotion)
@@ -110,11 +92,10 @@ final class ProductTableViewCell: UITableViewCell {
         stack.addArrangedSubview(availableSizes)
         stack.addArrangedSubview(addToCartButton)
 
+        stack.isLayoutMarginsRelativeArrangement = true
+        stack.layoutMargins = .init(top: Design.Token.spacing_B, left: Design.Token.spacing_B, bottom: Design.Token.spacing_B, right: Design.Token.spacing_B)
         stack.setCustomSpacing(Design.Token.spacing_C, after: availableSizes)
-        stack.layoutMargins = .init(top: Design.Token.spacing_B,
-                                    left: Design.Token.spacing_B,
-                                    bottom: Design.Token.spacing_B,
-                                    right: Design.Token.spacing_B)
+
         return stack
     }()
 
@@ -135,24 +116,22 @@ extension ProductTableViewCell {
         selectionStyle = .none
         
         contentView.addSubview(productImage)
-        contentView.addSubview(verticalStack)
         contentView.addSubview(noImageLabel)
+        contentView.addSubview(verticalStack)
+
+        verticalStack.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        verticalStack.leadingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -Design.Token.spacing_C).isActive = true
+        verticalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        verticalStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
 
         productImage.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        productImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         productImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         productImage.trailingAnchor.constraint(equalTo: contentView.centerXAnchor, constant: -Design.Token.spacing_C).isActive = true
+        productImage.heightAnchor.constraint(equalTo: verticalStack.heightAnchor).isActive = true
 
         noImageLabel.centerXAnchor.constraint(equalTo: productImage.centerXAnchor).isActive = true
         noImageLabel.centerYAnchor.constraint(equalTo: productImage.centerYAnchor, constant: Design.Token.spacing_C).isActive = true
 
-        verticalStack.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        verticalStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        verticalStack.leadingAnchor.constraint(equalTo: productImage.trailingAnchor).isActive = true
-        verticalStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-
-        addToCartButton.leadingAnchor.constraint(equalTo: verticalStack.leadingAnchor, constant: Design.Token.spacing_B).isActive = true
-        addToCartButton.trailingAnchor.constraint(equalTo: verticalStack.trailingAnchor, constant: -Design.Token.spacing_B).isActive = true
         addToCartButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
 
@@ -176,6 +155,8 @@ extension ProductTableViewCell {
     }
 
     private func setImage(_ remoteURL: String) {
+        noImageLabel.isHidden = true
+        productImage.image = nil
         productImage.contentMode = .scaleAspectFill
         guard let url = URL(string: remoteURL) else {
             usePlaceHolder()
@@ -195,5 +176,17 @@ extension ProductTableViewCell {
         productImage.contentMode = .center
         productImage.image = .productPlaceHolder
         noImageLabel.isHidden = false
+    }
+
+    private func animation() {
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+            self.addToCartButton.setImage(UIImage(systemName: "checkmark"), for: .normal)
+            self.contentView.layoutIfNeeded()
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
+                self.addToCartButton.setImage(UIImage(systemName: "cart.fill.badge.plus"), for: .normal)
+            })
+        })
+
     }
 }

@@ -9,8 +9,6 @@ final class CartTableViewCell: UITableViewCell {
 
     weak var delegate: CartTableViewCellDelegate?
 
-    private var index = 0
-
     static var reuseIdentifier: String { String(describing: self) }
 
     private lazy var productImage: UIImageView = {
@@ -37,6 +35,7 @@ final class CartTableViewCell: UITableViewCell {
     private lazy var decreaseButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "cart.fill.badge.minus"), for: .normal)
+        button.tintColor = .red
         button.addAction(UIAction(handler: { [weak self] _ in
             guard let self else { return }
             self.delegate?.decreaseQuantity(self)
@@ -65,9 +64,11 @@ final class CartTableViewCell: UITableViewCell {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 2
+        stack.distribution = .fill
+        stack.alignment = .fill
         stack.addArrangedSubview(decreaseButton)
-        stack.addArrangedSubview(increaseButton)
         stack.addArrangedSubview(quantity)
+        stack.addArrangedSubview(increaseButton)
         return stack
     }()
 

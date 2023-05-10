@@ -7,8 +7,8 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(ProductTableViewCell.self, forCellReuseIdentifier: ProductTableViewCell.reuseIdentifier)
-        tableView.dataSource = self
         tableView.delegate = self
+        tableView.dataSource = self
         return tableView
     }()
 
@@ -133,10 +133,6 @@ extension ProductListingViewController: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int { 1 }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        tableView.bounds.height / 2
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ProductTableViewCell.reuseIdentifier, for: indexPath) as! ProductTableViewCell
         cell.configure(with: viewModel.products[indexPath.row])
@@ -147,10 +143,8 @@ extension ProductListingViewController: UITableViewDataSource {
 }
 
 extension ProductListingViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        /*let product = viewModel.products[indexPath.row]
-        let productDetailViewController = ProductDetailViewController(viewModel: ProductDetailViewModel(product: product))
-        navigationController?.pushViewController(productDetailViewController, animated: true)*/
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        tableView.bounds.height / 2.3
     }
 }
 

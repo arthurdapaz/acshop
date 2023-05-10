@@ -65,6 +65,7 @@ struct Cart {
         var totalPrice: Double = 0
         for (product, quantity) in products {
             totalPrice += Double(quantity) * convertMoneyToDouble(product.actualPrice)
+            print("PRICE", totalPrice)
         }
         let formattedPrice = Self.numberFormatter.string(from: NSNumber(value: totalPrice))
         return formattedPrice ?? ""

@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "53E94A59-D2A1-4345-83DC-CFC079BB1731",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Challenge.xcodeproj",
+      "identifier" : "2536A6A92A0A6D8E00CE2221",
+      "name" : "Challenge"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Challenge.xcodeproj",
+        "identifier" : "2536A6BF2A0A6D8F00CE2221",
+        "name" : "ChallengeTests"
+      }
+    }
+  ],
+  "version" : 1
+}

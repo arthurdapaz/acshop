@@ -1,3 +1,4 @@
+import Combine
 import XCTest
 @testable import Challenge
 
@@ -5,6 +6,7 @@ class ProductListingViewModelTests: XCTestCase {
 
     var viewModel: ProductListingViewModel!
     var mockService: MockAPIClient!
+    var cancellables = [AnyCancellable]()
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -18,7 +20,7 @@ class ProductListingViewModelTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testFetchProducts() async throws {
+    func testFetchProducts() throws {
         // Given
         let size1 = Size(available: true, size: "M", sku: "123")
         let size2 = Size(available: true, size: "L", sku: "456")
@@ -26,20 +28,38 @@ class ProductListingViewModelTests: XCTestCase {
         mockService.products = expectedProducts
 
         // When
+        let exp = expectation(description: "Loading products")
+        exp.assertForOverFulfill = false
+
         viewModel.fetchProducts()
+
+        viewModel.$products.receive(on: RunLoop.main).sink { value in
+            exp.fulfill()
+        }.store(in: &cancellables)
+
+        wait(for: [exp], timeout: 1)
 
         // Then
         XCTAssertEqual(viewModel.products, expectedProducts)
         XCTAssertEqual(viewModel.viewState, .loaded)
     }
 
-    func testFetchProductsError() async throws {
+    func testFetchProductsError() throws {
         // Given
         let expectedError = NSError(domain: "test", code: 0, userInfo: nil)
         mockService.error = expectedError
 
         // When
+        let exp = expectation(description: "Loading products")
+        exp.assertForOverFulfill = false
+
+        viewModel.$products.receive(on: RunLoop.main).sink { value in
+            exp.fulfill()
+        }.store(in: &cancellables)
+
         viewModel.fetchProducts()
+
+        wait(for: [exp], timeout: 1)
 
         // Then
         XCTAssertEqual(viewModel.viewState, .error(expectedError))

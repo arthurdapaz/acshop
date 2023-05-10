@@ -8,6 +8,8 @@ A arquitetura escolhida foi MVVM. Adotamos o factory pattern para construção s
 
 A estruturada de pastas do projeto foi definida com a seguinte abstração arquitetural:
 
+<img src="docs/layers.png" width="25%">
+
 ## Application
 Pasta onde ficam localizados arquivos referentes ao entry point da aplicação (`@main`). Na camada da aplicação, além dos assets, launch screen, e recursos como o Info.plist, fica situado o `AppDelegate`.
 

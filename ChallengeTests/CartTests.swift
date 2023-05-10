@@ -1,14 +1,6 @@
-//
-//  ChallengeTests.swift
-//  ChallengeTests
-//
-//  Created by Arthur da Paz on 09/05/23.
-//
-
 import XCTest
-@testable import Challenge
 
-final class ChallengeTests: XCTestCase {
+final class CartTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

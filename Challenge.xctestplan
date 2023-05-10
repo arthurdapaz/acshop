@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "53E94A59-D2A1-4345-83DC-CFC079BB1731",
+      "id" : "79E9730A-C7B5-43C0-858A-92FC6044B1F2",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -9,9 +9,10 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "targetForVariableExpansion" : {
       "containerPath" : "container:Challenge.xcodeproj",
-      "identifier" : "2536A6A92A0A6D8E00CE2221",
+      "identifier" : "2533D71C2A0B35A80002C567",
       "name" : "Challenge"
     }
   },
@@ -19,7 +20,7 @@
     {
       "target" : {
         "containerPath" : "container:Challenge.xcodeproj",
-        "identifier" : "2536A6BF2A0A6D8F00CE2221",
+        "identifier" : "2533D7322A0B35A90002C567",
         "name" : "ChallengeTests"
       }
     }

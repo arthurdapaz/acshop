@@ -54,18 +54,13 @@ struct Cart {
     }
 
     func totalQuantity() -> Int {
-        var total = 0
-        for (_, quantity) in products {
-            total += quantity
-        }
-        return total
+        products.reduce(0) { $0 + $1.value }
     }
 
     func totalPrice() -> String {
         var totalPrice: Double = 0
         for (product, quantity) in products {
             totalPrice += Double(quantity) * convertMoneyToDouble(product.actualPrice)
-            print("PRICE", totalPrice)
         }
         let formattedPrice = Self.numberFormatter.string(from: NSNumber(value: totalPrice))
         return formattedPrice ?? ""

@@ -1,7 +1,7 @@
 import UIKit
 
 protocol ProductTableViewCellDelegate: AnyObject {
-    func didTapAddToCart(_ cellIndex: Int)
+    func didTapAddToCart(_ cellIndex: Int) -> Int
 }
 
 final class ProductTableViewCell: UITableViewCell {
@@ -9,6 +9,12 @@ final class ProductTableViewCell: UITableViewCell {
     weak var delegate: ProductTableViewCellDelegate?
 
     static var reuseIdentifier: String { String(describing: self) }
+
+    private var quantity = Int.zero {
+        didSet {
+            updateQuantity()
+        }
+    }
 
     private lazy var productImage: UIImageView = {
         let view = UIImageView()
@@ -72,7 +78,9 @@ final class ProductTableViewCell: UITableViewCell {
         button.backgroundColor = .storeSecondary
         button.layer.cornerRadius = 25
         button.addAction(UIAction { [unowned self] _ in
-            delegate?.didTapAddToCart(self.tag)
+            if let updatedQuantity = delegate?.didTapAddToCart(self.tag) {
+                quantity = updatedQuantity
+            }
             self.animation()
         }, for: .touchUpInside)
 
@@ -135,14 +143,14 @@ extension ProductTableViewCell {
         addToCartButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
 
-    func configure(with product: Product) {
-        setImage(product.image)
+    func configure(with model: Product, quantity: Int) {
+        setImage(model.image)
 
-        name.text = product.name
-        price.text = product.regularPrice
-        promotionPrice.text = product.actualPrice
-        promotionPrice.isHidden = !product.onSale
-        if product.onSale {
+        name.text = model.name
+        price.text = model.regularPrice
+        promotionPrice.text = model.actualPrice
+        promotionPrice.isHidden = !model.onSale
+        if model.onSale {
             promotion.text = "Em promoção:"
             promotion.textColor = .systemGreen
         } else {
@@ -150,8 +158,18 @@ extension ProductTableViewCell {
             promotion.textColor = .systemGray
         }
 
-        let sizes = (product.sizes.filter { $0.available }.map { $0.size }).joined(separator: " ")
+        let sizes = (model.sizes.filter { $0.available }.map { $0.size }).joined(separator: " ")
         availableSizes.text = "Tamanhos:\n\(sizes)"
+
+        self.quantity = quantity
+    }
+
+    private func updateQuantity() {
+        if quantity > .zero {
+            addToCartButton.setTitle("Adicionado: \(quantity) ", for: .normal)
+        } else {
+            addToCartButton.setTitle("Adicionar ", for: .normal)
+        }
     }
 
     private func setImage(_ remoteURL: String) {

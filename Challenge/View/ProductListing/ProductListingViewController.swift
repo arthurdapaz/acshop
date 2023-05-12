@@ -3,14 +3,21 @@ import UIKit
 
 final class ProductListingViewController: ViewController<ProductListingViewModel> {
 
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(ProductTableViewCell.self, forCellReuseIdentifier: ProductTableViewCell.reuseIdentifier)
-        tableView.delegate = self
-        tableView.dataSource = self
+        tableView.allowsSelection = false
         return tableView
     }()
+
+    private lazy var dataSource = UITableView.DataSource<Product>(tableView: tableView) { [weak self] tableView, indexPath, item in
+        let cell = tableView.dequeueReusableCell(withIdentifier: ProductTableViewCell.reuseIdentifier, for: indexPath) as? ProductTableViewCell
+        cell?.configure(with: item, quantity: self?.viewModel.cart.quantity(for: item) ?? .zero)
+        cell?.tag = indexPath.row
+        cell?.delegate = self
+        return cell
+    }
 
     private lazy var indicatorView: UIActivityIndicatorView = {
         let loader = UIActivityIndicatorView()
@@ -58,19 +65,17 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
     override func configViews() {
         title = "Produtos"
         view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "cart"),
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(didTapCartIcon))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "cart"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapCartIcon)
+        )
+        tableView.dataSource = dataSource
+        tableView.delegate = self
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        addBindings()
-        viewModel.fetchProducts()
-    }
-
-    private func addBindings() {
+    override func configBindings() {
         viewModel.$viewState
             .receive(on: RunLoop.main)
             .sink { [weak self] in
@@ -79,16 +84,20 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
 
         viewModel.$products
             .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-            self?.tableView.reloadData()
-        }.store(in: &cancellables)
+            .sink { [weak self] products in
+                self?.dataSource.set(items: products)
+            }.store(in: &cancellables)
 
         viewModel.$cart
             .receive(on: RunLoop.main)
             .map { UIImage(systemName: $0.isEmpty ? "cart" : "cart.fill") }
-            .sink { [weak self] in
-                self?.setCartIcon($0)
-        }.store(in: &cancellables)
+            .assign(to: \.image, on: navigationItem.rightBarButtonItem.unsafelyUnwrapped)
+            .store(in: &cancellables)
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.fetchProducts()
     }
 
     @objc private func didTapCartIcon() {
@@ -96,9 +105,10 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
 
         cartViewModel.$cart
             .receive(on: RunLoop.main)
-            .sink { [weak viewModel] in
-                viewModel?.cart = $0
-        }.store(in: &cancellables)
+            .sink { [weak self] in
+                self?.viewModel.cart = $0
+                self?.tableView.reloadData()
+            }.store(in: &cancellables)
 
         present(cartController, animated: true)
     }
@@ -119,37 +129,19 @@ final class ProductListingViewController: ViewController<ProductListingViewModel
             showError(title: "Erro desconhecido", message: "Um erro não esperado aconteceu. \(error?.localizedDescription ?? String(describing: error))")
         }
     }
-
-    private func setCartIcon(_ image: UIImage? = UIImage(systemName: "cart")) {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: image,
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(didTapCartIcon))
-    }
-}
-
-extension ProductListingViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { viewModel.products.count }
-
-    func numberOfSections(in tableView: UITableView) -> Int { 1 }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ProductTableViewCell.reuseIdentifier, for: indexPath) as! ProductTableViewCell
-        cell.configure(with: viewModel.products[indexPath.row])
-        cell.tag = indexPath.row
-        cell.delegate = self
-        return cell
-    }
 }
 
 extension ProductListingViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        tableView.bounds.height / 2.3
-    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { tableView.bounds.height / 2.3 }
 }
 
 extension ProductListingViewController: ProductTableViewCellDelegate {
-    func didTapAddToCart(_ cellIndex: Int) {
+    func didTapAddToCart(_ cellIndex: Int) -> Int {
         viewModel.addToCart(productIndex: cellIndex)
+        guard viewModel.products.indices.contains(cellIndex) else {
+            assertionFailure("This should never happen")
+            return 0
+        }
+        return viewModel.cart.quantity(for: viewModel.products[cellIndex])
     }
 }

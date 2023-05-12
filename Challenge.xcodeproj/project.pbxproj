@@ -33,6 +33,7 @@
 		250CC5AB2A0B366300D280F3 /* ProductListingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250CC5A82A0B366300D280F3 /* ProductListingViewModelTests.swift */; };
 		250CC5AC2A0B366300D280F3 /* ShoppingCartViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250CC5A92A0B366300D280F3 /* ShoppingCartViewModelTests.swift */; };
 		2588E2252A0DCE6900CCC6DB /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 2588E2242A0DCE6900CCC6DB /* OrderedCollections */; };
+		2588E4102A0DDDFD00CCC6DB /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2588E40F2A0DDDFD00CCC6DB /* UITableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		252EF9332A0B3793006A31F8 /* Challenge.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Challenge.xctestplan; sourceTree = "<group>"; };
 		2533D71D2A0B35A80002C567 /* Challenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Challenge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2533D7332A0B35A90002C567 /* ChallengeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChallengeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2588E40F2A0DDDFD00CCC6DB /* UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +201,7 @@
 				250CC58C2A0B365900D280F3 /* UIColor.swift */,
 				250CC58D2A0B365900D280F3 /* UIImage.swift */,
 				250CC58E2A0B365900D280F3 /* UIImageView.swift */,
+				2588E40F2A0DDDFD00CCC6DB /* UITableView.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 				250CC5A42A0B365900D280F3 /* UIImage.swift in Sources */,
 				250CC5932A0B365900D280F3 /* ShoppingCartViewController.swift in Sources */,
 				250CC5982A0B365900D280F3 /* Design.swift in Sources */,
+				2588E4102A0DDDFD00CCC6DB /* UITableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,7 +3,7 @@ import UIKit
 
 class ViewController<ViewModel>: UIViewController {
 
-    var cancellables: [AnyCancellable] = []
+    var cancellables = Set<AnyCancellable>()
 
     let viewModel: ViewModel
 
@@ -13,6 +13,7 @@ class ViewController<ViewModel>: UIViewController {
         setupHierarchy()
         setupConstraints()
         configViews()
+        configBindings()
     }
 
     @available(*, unavailable)
@@ -23,6 +24,8 @@ class ViewController<ViewModel>: UIViewController {
     func setupConstraints() { fatalError("Please override \(#function)") }
 
     func configViews() { fatalError("Please override \(#function)") }
+
+    func configBindings() { fatalError("Please override \(#function)") }
 }
 
 extension ViewController {

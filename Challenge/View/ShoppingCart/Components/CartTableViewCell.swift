@@ -126,7 +126,7 @@ extension CartTableViewCell {
         setImage(product.image)
 
         name.text = product.name
-        price.text = product.regularPrice
+        price.text = product.actualPrice
         self.quantity.text = "Quantidade: \(quantity)"
     }
 

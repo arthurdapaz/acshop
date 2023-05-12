@@ -5,7 +5,7 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.font = .preferredFont(forTextStyle: .title1)
         label.text = "Carrinho"
         return label
     }()
@@ -19,15 +19,22 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
         return label
     }()
 
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CartTableViewCell.self, forCellReuseIdentifier: CartTableViewCell.reuseIdentifier)
-        tableView.dataSource = self
-        tableView.delegate = self
         tableView.contentInset = .init(top: 0, left: 0, bottom: Design.Token.spacing_C * 2, right: 0)
         return tableView
     }()
+
+    private lazy var dataSource = UITableView.DataSource<Product>(tableView: tableView) { [unowned viewModel] tableView, indexPath, item in
+        let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.reuseIdentifier, for: indexPath) as! CartTableViewCell
+        let quantity = viewModel.cart.quantity(for: item)
+        cell.configure(with: item, quantity: quantity)
+        cell.delegate = self
+        cell.tag = indexPath.row
+        return cell
+    }
 
     private lazy var buyButton: UIButton = {
         let button = UIButton(type: .system)
@@ -43,11 +50,6 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
         }, for: .touchUpInside)
         return button
     }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        addBindings()
-    }
 
     override func setupHierarchy() {
         view.addSubview(titleLabel)
@@ -79,9 +81,11 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
     override func configViews() {
         view.backgroundColor = .white
         title = "Carrinho"
+        tableView.dataSource = dataSource
+        tableView.delegate = self
     }
 
-    private func addBindings() {
+    override func configBindings() {
         viewModel.$cart
             .receive(on: RunLoop.main)
             .map { !$0.isEmpty }
@@ -103,28 +107,9 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
 
         viewModel.$cart
             .receive(on: RunLoop.main)
-            .sink { [weak self] cart in
-                self?.tableView.reloadData()
+            .sink { [weak dataSource] cart in
+                dataSource?.set(items: cart.items)
             }.store(in: &cancellables)
-    }
-}
-
-extension ShoppingCartViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { viewModel.cart.uniqueQuantity }
-
-    func numberOfSections(in tableView: UITableView) -> Int { 1 }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.reuseIdentifier, for: indexPath) as! CartTableViewCell
-
-        let product = viewModel.cart.items[indexPath.row]
-        let quantity = viewModel.cart.quantity(for: product)
-
-        cell.tag = indexPath.row
-        cell.configure(with: product, quantity: quantity)
-        cell.delegate = self
-
-        return cell
     }
 }
 

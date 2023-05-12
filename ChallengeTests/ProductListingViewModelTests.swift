@@ -72,7 +72,7 @@ class ProductListingViewModelTests: XCTestCase {
         viewModel.products = [product]
 
         // When
-        viewModel.addToCart(productIndex: 0)
+        viewModel.addToCart(product: product)
 
         // Then
         XCTAssertEqual(viewModel.cart.items.first, product)

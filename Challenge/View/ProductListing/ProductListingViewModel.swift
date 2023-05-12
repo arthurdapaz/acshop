@@ -1,6 +1,11 @@
 import Foundation
 
 final class ProductListingViewModel {
+    enum Filter {
+        case all
+        case onSale
+    }
+
     enum ViewState {
         case loading
         case loaded
@@ -28,10 +33,7 @@ final class ProductListingViewModel {
         }
     }
 
-    func addToCart(productIndex: Int) {
-        guard products.indices.contains(productIndex) else {
-            fatalError("Got wrong item index")
-        }
-        cart.addProduct(products[productIndex])
+    func addToCart(product: Product) {
+        cart.addProduct(product)
     }
 }

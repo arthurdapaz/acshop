@@ -1,7 +1,7 @@
 import UIKit
 
 protocol ProductTableViewCellDelegate: AnyObject {
-    func didTapAddToCart(_ cellIndex: Int) -> Int
+    func didTapAddToCart(_ product: Product) -> Int
 }
 
 final class ProductTableViewCell: UITableViewCell {
@@ -15,6 +15,8 @@ final class ProductTableViewCell: UITableViewCell {
             updateQuantity()
         }
     }
+
+    private var product: Product!
 
     private lazy var productImage: UIImageView = {
         let view = UIImageView()
@@ -78,7 +80,7 @@ final class ProductTableViewCell: UITableViewCell {
         button.backgroundColor = .storeSecondary
         button.layer.cornerRadius = 25
         button.addAction(UIAction { [unowned self] _ in
-            if let updatedQuantity = delegate?.didTapAddToCart(self.tag) {
+            if let updatedQuantity = delegate?.didTapAddToCart(self.product) {
                 quantity = updatedQuantity
             }
             self.animation()
@@ -144,6 +146,7 @@ extension ProductTableViewCell {
     }
 
     func configure(with model: Product, quantity: Int) {
+        self.product = model
         setImage(model.image)
 
         name.text = model.name

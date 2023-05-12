@@ -32,6 +32,7 @@
 		250CC5AA2A0B366300D280F3 /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250CC5A72A0B366300D280F3 /* MockAPIClient.swift */; };
 		250CC5AB2A0B366300D280F3 /* ProductListingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250CC5A82A0B366300D280F3 /* ProductListingViewModelTests.swift */; };
 		250CC5AC2A0B366300D280F3 /* ShoppingCartViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 250CC5A92A0B366300D280F3 /* ShoppingCartViewModelTests.swift */; };
+		2588E2252A0DCE6900CCC6DB /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 2588E2242A0DCE6900CCC6DB /* OrderedCollections */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2588E2252A0DCE6900CCC6DB /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +267,9 @@
 			dependencies = (
 			);
 			name = Challenge;
+			packageProductDependencies = (
+				2588E2242A0DCE6900CCC6DB /* OrderedCollections */,
+			);
 			productName = Challenge;
 			productReference = 2533D71D2A0B35A80002C567 /* Challenge.app */;
 			productType = "com.apple.product-type.application";
@@ -316,6 +321,9 @@
 				Base,
 			);
 			mainGroup = 2533D7142A0B35A80002C567;
+			packageReferences = (
+				2588E2232A0DCE6900CCC6DB /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = 2533D71E2A0B35A80002C567 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -649,6 +657,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2588E2232A0DCE6900CCC6DB /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2588E2242A0DCE6900CCC6DB /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2588E2232A0DCE6900CCC6DB /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2533D7152A0B35A80002C567 /* Project object */;
 }

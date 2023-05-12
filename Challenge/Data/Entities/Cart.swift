@@ -1,7 +1,8 @@
 import Foundation
+import OrderedCollections
 
 struct Cart {
-    private var products: [Product: Int] = [:]
+    private var products: OrderedDictionary<Product, Int> = [:]
 
     private static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()

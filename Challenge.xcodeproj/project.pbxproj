@@ -128,8 +128,8 @@
 		250CC5732A0B365900D280F3 /* ShoppingCart */ = {
 			isa = PBXGroup;
 			children = (
-				250CC5742A0B365900D280F3 /* ShoppingCartViewController.swift */,
 				250CC5752A0B365900D280F3 /* Components */,
+				250CC5742A0B365900D280F3 /* ShoppingCartViewController.swift */,
 				250CC5772A0B365900D280F3 /* ShoppingCartViewModel.swift */,
 				250CC5782A0B365900D280F3 /* ShoppingCartFactory.swift */,
 			);

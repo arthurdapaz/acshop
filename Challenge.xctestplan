@@ -9,7 +9,6 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
     "targetForVariableExpansion" : {
       "containerPath" : "container:Challenge.xcodeproj",
       "identifier" : "2533D71C2A0B35A80002C567",

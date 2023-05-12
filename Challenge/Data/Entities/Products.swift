@@ -7,7 +7,15 @@ struct Size: Codable, Equatable {
 }
 
 struct Product: Codable, Equatable, Identifiable {
-    var id: String { sizes.map { $0.sku }.joined() }
+    var id: String {
+        let uniqueId = sizes.map { $0.sku }.joined()
+        if uniqueId.isEmpty {
+            assertionFailure("sku's list most never be empty")
+            return String(hashValue)
+        } else {
+            return uniqueId
+        }
+    }
 
     let name: String
     let style: String
@@ -44,10 +52,11 @@ struct Products: Codable, Equatable {
 
 extension Product: Hashable {
     public func hash(into hasher: inout Hasher) {
-        return hasher.combine(id)
+        hasher.combine(id)
+        hasher.combine(name)
     }
 
     public static func == (lhs: Product, rhs: Product) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 }

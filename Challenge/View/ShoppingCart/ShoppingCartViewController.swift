@@ -84,13 +84,13 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
     private func addBindings() {
         viewModel.$cart
             .receive(on: RunLoop.main)
-            .map { !$0.isEmpty() }
+            .map { !$0.isEmpty }
             .assign(to: \.isHidden, on: emptyLabel)
             .store(in: &cancellables)
 
         viewModel.$cart
             .receive(on: RunLoop.main)
-            .map { $0.isEmpty() }
+            .map { $0.isEmpty }
             .assign(to: \.isHidden, on: buyButton)
             .store(in: &cancellables)
 
@@ -110,14 +110,14 @@ final class ShoppingCartViewController: ViewController<ShoppingCartViewModel> {
 }
 
 extension ShoppingCartViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { viewModel.cart.uniqueItensQuantity() }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { viewModel.cart.uniqueQuantity }
 
     func numberOfSections(in tableView: UITableView) -> Int { 1 }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CartTableViewCell.reuseIdentifier, for: indexPath) as! CartTableViewCell
 
-        let product = viewModel.cart.itemsInOrderAdded()[indexPath.row]
+        let product = viewModel.cart.items[indexPath.row]
         let quantity = viewModel.cart.quantity(for: product)
 
         cell.tag = indexPath.row
@@ -134,12 +134,12 @@ extension ShoppingCartViewController: UITableViewDelegate {
 
 extension ShoppingCartViewController: CartTableViewCellDelegate {
     func increaseQuantity(_ cell: CartTableViewCell) {
-        let product = viewModel.cart.itemsInOrderAdded()[cell.tag]
+        let product = viewModel.cart.items[cell.tag]
         viewModel.cart.increaseQuantity(for: product)
     }
 
     func decreaseQuantity(_ cell: CartTableViewCell) {
-        let product = viewModel.cart.itemsInOrderAdded()[cell.tag]
+        let product = viewModel.cart.items[cell.tag]
         viewModel.cart.decreaseQuantity(for: product)
     }
 }

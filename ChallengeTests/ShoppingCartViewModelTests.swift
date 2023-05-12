@@ -11,17 +11,17 @@ class ShoppingCartViewModelTests: XCTestCase {
     }
 
     func testCartIsInitiallyEmpty() {
-        XCTAssertTrue(viewModel.cart.isEmpty())
+        XCTAssertTrue(viewModel.cart.isEmpty)
     }
 
     func testAddingProductToCart() {
         let product = createProduct()
         viewModel.cart.addProduct(product)
         XCTAssertEqual(viewModel.cart.quantity(for: product), 1)
-        XCTAssertEqual(viewModel.cart.totalQuantity(), 1)
-        XCTAssertFalse(viewModel.cart.isEmpty())
-        XCTAssertEqual(viewModel.cart.uniqueItensQuantity(), 1)
-        XCTAssertEqual(viewModel.cart.itemsInOrderAdded().first, product)
+        XCTAssertEqual(viewModel.cart.totalQuantity, 1)
+        XCTAssertFalse(viewModel.cart.isEmpty)
+        XCTAssertEqual(viewModel.cart.uniqueQuantity, 1)
+        XCTAssertEqual(viewModel.cart.items.first, product)
     }
 
     func testRemovingProductFromCart() {
@@ -29,10 +29,10 @@ class ShoppingCartViewModelTests: XCTestCase {
         viewModel.cart.addProduct(product)
         viewModel.cart.removeProduct(product)
         XCTAssertEqual(viewModel.cart.quantity(for: product), 0)
-        XCTAssertEqual(viewModel.cart.totalQuantity(), 0)
-        XCTAssertTrue(viewModel.cart.isEmpty())
-        XCTAssertEqual(viewModel.cart.uniqueItensQuantity(), 0)
-        XCTAssertEqual(viewModel.cart.itemsInOrderAdded().count, 0)
+        XCTAssertEqual(viewModel.cart.totalQuantity, 0)
+        XCTAssertTrue(viewModel.cart.isEmpty)
+        XCTAssertEqual(viewModel.cart.uniqueQuantity, 0)
+        XCTAssertEqual(viewModel.cart.items.count, 0)
     }
 
     func testIncreasingProductQuantity() {
@@ -40,10 +40,10 @@ class ShoppingCartViewModelTests: XCTestCase {
         viewModel.cart.addProduct(product)
         viewModel.cart.increaseQuantity(for: product)
         XCTAssertEqual(viewModel.cart.quantity(for: product), 2)
-        XCTAssertEqual(viewModel.cart.totalQuantity(), 2)
-        XCTAssertFalse(viewModel.cart.isEmpty())
-        XCTAssertEqual(viewModel.cart.uniqueItensQuantity(), 1)
-        XCTAssertEqual(viewModel.cart.itemsInOrderAdded().first, product)
+        XCTAssertEqual(viewModel.cart.totalQuantity, 2)
+        XCTAssertFalse(viewModel.cart.isEmpty)
+        XCTAssertEqual(viewModel.cart.uniqueQuantity, 1)
+        XCTAssertEqual(viewModel.cart.items.first, product)
     }
 
     func testDecreasingProductQuantity() {
@@ -52,10 +52,10 @@ class ShoppingCartViewModelTests: XCTestCase {
         viewModel.cart.increaseQuantity(for: product)
         viewModel.cart.decreaseQuantity(for: product)
         XCTAssertEqual(viewModel.cart.quantity(for: product), 1)
-        XCTAssertEqual(viewModel.cart.totalQuantity(), 1)
-        XCTAssertFalse(viewModel.cart.isEmpty())
-        XCTAssertEqual(viewModel.cart.uniqueItensQuantity(), 1)
-        XCTAssertEqual(viewModel.cart.itemsInOrderAdded().first, product)
+        XCTAssertEqual(viewModel.cart.totalQuantity, 1)
+        XCTAssertFalse(viewModel.cart.isEmpty)
+        XCTAssertEqual(viewModel.cart.uniqueQuantity, 1)
+        XCTAssertEqual(viewModel.cart.items.first, product)
     }
 
     func testTotalPrice() {
